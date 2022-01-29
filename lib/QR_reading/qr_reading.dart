@@ -31,7 +31,12 @@ class _QRViewExampleState extends State<QRViewExample> {
   }
 
   bool checkURL(code) {
-    return Uri.tryParse(code)?.hasAbsolutePath ?? false;
+    bool isurl = Uri.tryParse(code)?.hasAbsolutePath ?? false;
+    return isurl;
+  }
+
+  void _launchURL(_url) async {
+    if (!await launch(_url)) throw 'Could not launch $_url';
   }
 
   reset() {
@@ -136,20 +141,28 @@ class _QRViewExampleState extends State<QRViewExample> {
                         'Data: ${result!.code}',
                       )),
                       Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                reset();
-                              },
-                              child: const Text('ok',
-                                  style: TextStyle(fontSize: 20)),
-                            ),
-                            ElevatedButton(
-                              onPressed: checkURL(result!.code) ? null : () {},
-                              child: const Text('Go to URL',
-                                  style: TextStyle(fontSize: 20)),
-                            )
+                            Container(
+                                margin: const EdgeInsets.all(8),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    reset();
+                                  },
+                                  child: const Text('ok',
+                                      style: TextStyle(fontSize: 20)),
+                                )),
+                            Container(
+                                margin: const EdgeInsets.all(8),
+                                child: ElevatedButton(
+                                  onPressed: checkURL(result!.code)
+                                      ? () {
+                                          _launchURL(result!.code);
+                                        }
+                                      : null,
+                                  child: const Text('Go to URL',
+                                      style: TextStyle(fontSize: 20)),
+                                )),
                           ])
                     ],
                   ),
